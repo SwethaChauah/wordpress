@@ -1,0 +1,33 @@
+
+
+
+<h1>Welcome to vlab</h1>
+    			<h1>Successful Login </h1>
+
+{% block main %}
+
+        		{% if user and not user.is_anonymous %}
+        		
+    				<p>
+    					<ul>
+    						<li>
+        						<a>Hello {{ user.get_full_name|default:user.username }}!</a>
+							</li>
+    						<li>
+      							<a>{{ user.email}} </a>
+      						</li>
+						</ul>
+					</p>
+					
+					
+    			{% else %}
+    					<li>
+       					<a href="{% url 'social:begin' 'google-oauth2' %}?next={{ request.path }}">Login with NYU</a>
+     					</li>
+      
+   				{% endif %}
+   				<a href="{% url 'auth:logout' %}?next={{ request.path }}">Logout</a>
+   
+ 
+{% endblock %}
+    
