@@ -1,0 +1,147 @@
+<!--{% extends 'friends/base.html' %}-->
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script type='text/javascript' src='http://code.jquery.com/jquery-1.8.2.js'></script>
+</head>
+  <body>
+
+{% block main %}
+    <h1>Successful Login </h1>
+    <p>
+    <ul>
+        {% if user and not user.is_anonymous %}
+    <li>
+        <a>Hello {{ user.get_full_name|default:user.username }}!</a>
+</li>
+    <li>
+      <a>{{ user.email}} </a>
+    </li>
+<h3>ToDoList </h3>
+<br>
+<br>
+<div class="col-lg-4" >  
+<ul><table id="resulttable" background-color="#00FF00" border="1" width="350">
+  {% for friends in latest_friends_list %}
+      <tr id="tr_{{friends.id}}">
+         <td id="td_{{friends.id}}">{{ friends.name1 }}</td>
+         <td>
+              <input id = "{{ friends.id }}" type="text" name="name" style="width: 80px;"> 
+              <button id="{{ friends.id }}" class="updatebutton1" onclick=ajaxmethod2('{{ friends.id }}')>Update</button>
+        <td>
+              <button class="deletebutton" id="{{ friends.id }}" onclick=ajaxmethod1('{{ friends.id }}') >Delete</button></td>
+      </tr>
+  {% endfor %}
+</table>
+<br>
+<br>
+
+<h2>Add New ToDo Item </h2>
+    <br>
+    <table border="1">
+              {% csrf_token %}
+              <tr>
+                  <div>
+                      <td> Enter To do item </td>
+                      <td><input id = "friend_details_name" type="text" name="name" > </td>
+                  </div>
+              </tr>
+             </table>
+          <br>
+                  <div>
+                      <button id="updatebutton" class="updatebutton" onclick=ajaxmethod()>Show in Table!!!!</button>
+                  </div>
+ <script type ="text/javascript">
+    function ajaxmethod() 
+{ var name = document.getElementById('friend_details_name').value;
+  var id = document.getElementById('value_id');
+  
+     
+        $.ajax({
+
+            type: "POST",
+            url: "addfriend",
+            async: "true",
+            data: {
+                csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                name: document.getElementById('friend_details_name').value,
+                },
+
+       success: function(response)
+        {  
+          
+            $('#resulttable').append("<tr id=tr_"+response+"><td id=td_"+response+">"+name+"</td><td><input id = '"+response+"' type=text name=name size=6><button id='"+response+"' class=updatebutton1 onclick=ajaxmethod2("+response+")>Update</button></td><td><button class=deletebutton id="+response+" onclick=ajaxmethod1('"+response+"') >Delete</button></td></tr>");
+             document.getElementById("friend_details_name").value = "";
+            $('output').html(response.message);
+           
+        }
+      });   
+    
+}
+
+  function ajaxmethod1(id) 
+{
+ 
+                $.ajax({
+                    type: "POST",
+                    url:"delete",
+                    data: { fid : id,
+                            csrfmiddlewaretoken: '{{ csrf_token }}'
+
+                         }, 
+                         
+                 success: function(json)
+                 {
+                      
+                      $("#tr_"+id).remove();
+                     $('output').html(json.message);
+                     //$('#resulttable').append(response);
+                }
+              
+            });
+}
+function ajaxmethod2(id) {
+  
+  var name = document.getElementById(id).value;
+$.ajax({
+   
+            type: "POST",
+            url: "update1",
+            async: "true",
+            data: {
+                fid : id,
+                csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                name: document.getElementById(id).value,
+          },
+        success: function(json)
+        {   
+            $('output').html(json.message);
+            $("#td_"+id).html(name);
+            document.getElementById(id).value = "";
+
+        }
+        });
+    
+}
+
+
+</script>
+    </ul>
+       
+<li>
+       <a href="{% url 'auth:logout' %}?next={{ request.path }}">Logout</a>
+</li>
+     
+{% else %}
+    <li>
+       <a href="{% url 'social:begin' 'google-oauth2' %}?next={{ request.path }}">Login with Google</a>
+     </li>
+      
+   {% endif %}
+   </ul>
+</p>
+ 
+{% endblock %}
+</body>
+</html>

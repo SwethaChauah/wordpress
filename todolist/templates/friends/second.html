@@ -1,0 +1,16 @@
+<h3>Add New Friend Here</h3>
+<form action="addfriend" method="post" >
+<table border="1">
+ {% csrf_token %}
+<tr>
+<td> Enter Friend Name </td>
+<td><input id = "friend_details" type="text" name="name" > </td>
+</tr>
+<tr>
+<td> Enter Friend Location </td>
+<td><input id = "friend_details" type="text" name = "location"> </td>
+</tr>
+</table>
+<br>
+<input type="submit" value="Submit">
+</form>

@@ -1,0 +1,18 @@
+<h3>register here</h3>
+<form action = "register" method = post>
+Name: <input type="text" name="name"><br>
+ NYU Email: <input type="email" name="email"><br>
+  <input type="submit" value="Submit">
+</form>
+
+<h3>Registered ?? <a href = "google_login">Login Here </a></h3>
+{% if new_person_list %}
+<table border="1" width="600">
+	{% for friends in new_person_list %}
+	<tr>
+	<td><h3> {{ friends.name}} </h3></td>
+	<td><h3> {{ friends.email }} </h3></td>
+	</tr>
+	{% endfor %}
+</table>
+ {% endif %}
